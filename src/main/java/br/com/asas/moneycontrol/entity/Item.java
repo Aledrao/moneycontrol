@@ -10,7 +10,22 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "item")
 public class Item {
-
+	
+	public Item() {
+		super();
+	}
+	
+	public Item(Long codigo, String nome) {
+		super();
+		this.codigo = codigo;
+		this.nome = nome;
+	}
+	
+	public Item(String nome) {
+		super();
+		this.nome = nome;
+	}
+	
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_item")
 	@Id
