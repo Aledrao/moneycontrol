@@ -30,15 +30,12 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public Item findById(Long id) throws ItemException {
-		Item item = new Item();
 		boolean possuiItemPorId = itemRepository.existsById(id);
-		if(!possuiItemPorId) {
-			item = itemRepository.getOne(id);
-			return item;
+		if(possuiItemPorId) {
+			return itemRepository.getOne(id);
 		} else {
 			throw new ItemException("Não foi possivel localizar o item pelo Id: " + id);
-		}
-		
+		}		
 	}
 
 	@Override
@@ -72,9 +69,9 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public boolean findItem(Long id) throws ItemException {
 		boolean findItem = itemRepository.existsById(id);
-		if(!findItem) {
-			return false;
+		if(findItem) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
