@@ -2,6 +2,7 @@ package br.com.asas.moneycontrol.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +30,7 @@ public class Pessoa {
 	
 	@Column(name = "data_nascimento")
 	@Temporal(TemporalType.DATE)
-	private LocalDate dataNascimento;
+	private Date dataNascimento;
 	
 	@Column(name = "sexo")
 	private String sexo;
