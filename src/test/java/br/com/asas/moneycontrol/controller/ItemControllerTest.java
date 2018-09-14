@@ -1,8 +1,11 @@
 package br.com.asas.moneycontrol.controller;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -41,5 +44,15 @@ public class ItemControllerTest {
 	public void deveriaApresentarTodaListaItens() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/itens").accept(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$", hasSize(3))).andDo(print());
+	}
+	
+	@Test
+	public void deveriaApresentarItemAtravesId() throws Exception {
+		mockMvc.perform(get("/itens/1"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json;charset=UTF-8"))
+			.andExpect(jsonPath("$.codigo").value(1))
+			.andExpect(jsonPath("$.nome").value("Transporte"))
+			.andDo(print());
 	}
 }

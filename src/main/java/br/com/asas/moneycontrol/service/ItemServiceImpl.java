@@ -1,10 +1,10 @@
 package br.com.asas.moneycontrol.service;	
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.asas.moneycontrol.bean.ResponseBean;
 import br.com.asas.moneycontrol.entity.Item;
@@ -12,7 +12,6 @@ import br.com.asas.moneycontrol.exception.ItemException;
 import br.com.asas.moneycontrol.repository.ItemRepository;
 
 @Service
-@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
 	
 	@Autowired
@@ -32,7 +31,9 @@ public class ItemServiceImpl implements ItemService {
 	public Item findById(Long id) throws ItemException {
 		boolean possuiItemPorId = itemRepository.existsById(id);
 		if(possuiItemPorId) {
-			return itemRepository.getOne(id);
+			Optional<Item> optimal = itemRepository.findById(id);
+			Item item = optimal.get();
+			return item;
 		} else {
 			throw new ItemException("Não foi possivel localizar o item pelo Id: " + id);
 		}		
