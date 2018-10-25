@@ -33,6 +33,7 @@ public class Item {
 	@Column(name = "id_item")
 	@Id
 	private Long codigo;
+	
 	@Column(name = "item")
 	private String nome;
 	

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.asas.moneycontrol.bean.ResponseBean;
@@ -34,7 +35,8 @@ public class ItemController {
 		}
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> findOne(@PathVariable("id") Long id) {
 		try {
 			Item item = itemService.findById(id);
@@ -52,7 +54,7 @@ public class ItemController {
 			return ResponseEntity.ok(response);
 		} catch (ItemException e) {
 			e.getMessage();
-			return (ResponseEntity<?>) ResponseEntity.noContent();
+			return (ResponseEntity<?>) ResponseEntity.ok();
 		}
 	}
 	
