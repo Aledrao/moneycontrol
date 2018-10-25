@@ -7,8 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "item")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Item {
 	
 	public Item() {
@@ -30,6 +33,7 @@ public class Item {
 	@Column(name = "id_item")
 	@Id
 	private Long codigo;
+	
 	@Column(name = "item")
 	private String nome;
 	

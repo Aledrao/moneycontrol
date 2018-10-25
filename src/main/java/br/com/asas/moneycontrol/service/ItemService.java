@@ -8,7 +8,7 @@ import br.com.asas.moneycontrol.exception.ItemException;
 
 public interface ItemService {
 
-	List<Item>findAll() throws ItemException;
+	List<Item> findAll() throws ItemException;
 	Item findById(Long id) throws ItemException;
 	ResponseBean save(Item item) throws ItemException;
 	ResponseBean update(Item item) throws ItemException;
