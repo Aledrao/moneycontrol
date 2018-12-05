@@ -6,8 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import net.bytebuddy.implementation.bind.annotation.Empty;
 
 @Entity
 @Table(name = "item")
@@ -34,6 +37,7 @@ public class Item {
 	@Id
 	private Long codigo;
 	
+	@NotEmpty(message="Informe o nome do item.")
 	@Column(name = "item")
 	private String nome;
 	

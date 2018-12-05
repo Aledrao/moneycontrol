@@ -2,9 +2,12 @@ package br.com.asas.moneycontrol.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,8 +51,11 @@ public class ItemController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> save(@RequestBody Item item) {
+	public ResponseEntity<?> save(@Valid @RequestBody Item item, Errors errors) {
 		try {
+			if(errors.hasErrors()) {
+				return ResponseEntity.ok(errors.getFieldError().getDefaultMessage());
+			}
 			ResponseBean response = itemService.save(item);
 			return ResponseEntity.ok(response);
 		} catch (ItemException e) {

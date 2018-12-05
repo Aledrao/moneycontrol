@@ -41,12 +41,8 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public ResponseBean save(Item item) throws ItemException {
-		if(item.getNome().equals("")) {
-			throw new ItemException("O nome do item não foi informado.");
-		} else {
-			itemRepository.save(item);			
-			return new ResponseBean("Item criado com sucesso.");
-		}
+		itemRepository.save(item);			
+		return new ResponseBean("Item criado com sucesso.");		
 	}
 
 	@Override

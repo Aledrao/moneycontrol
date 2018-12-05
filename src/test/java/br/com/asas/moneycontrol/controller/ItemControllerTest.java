@@ -1,17 +1,18 @@
 package br.com.asas.moneycontrol.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 
-import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -133,5 +132,51 @@ public class ItemControllerTest {
 		ResponseBean responseBean = new ResponseBean("Item criado com sucesso");
 		assertEquals(responseBean.getCodigo(), 0);
 		assertEquals(responseBean.getMensagem(), "Item criado com sucesso");
+	}
+	
+	@Test
+	public void deveriaAtualizarItem() throws Exception {
+		Item item = new Item();
+		item.setCodigo(1L);
+		item.setNome("Teste");
+		
+		ResponseBean response = new  ResponseBean("Item atualizado com sucesso.");
+		
+		when(itemServiceMock.update(any(Item.class))).thenReturn(response);
+		
+		mockMvc.perform(put("/itens/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{ \"codigo\" : 1, \"nome\" : \"Segundo\" }"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$.codigo", is(0)))
+        .andExpect(jsonPath("$.mensagem", is("Item atualizado com sucesso.")));
+		
+		ArgumentCaptor<Item> itemCaptor = ArgumentCaptor.forClass(Item.class);
+		verify(itemServiceMock, times(1)).update(itemCaptor.capture());
+		verifyNoMoreInteractions(itemServiceMock);
+
+		ResponseBean responseBean = new ResponseBean("Item atualizado com sucesso");
+		assertEquals(responseBean.getCodigo(), 0);
+		assertEquals(responseBean.getMensagem(), "Item atualizado com sucesso");
+	}
+	
+	@Test
+	public void deveriaExcluirItem() throws Exception {		
+		boolean response = true;
+		
+		when(itemServiceMock.delete(1L)).thenReturn(response);
+		
+		mockMvc.perform(delete("/itens/1")
+				.contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$", is(true)));
+		
+		verify(itemServiceMock, times(1)).delete(1L);
+		verifyNoMoreInteractions(itemServiceMock);
+//		
+		boolean retorno = true;
+		assertEquals(retorno, true);
 	}
 }
