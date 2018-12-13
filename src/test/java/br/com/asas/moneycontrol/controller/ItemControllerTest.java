@@ -1,6 +1,5 @@
 package br.com.asas.moneycontrol.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
@@ -47,7 +46,7 @@ import br.com.asas.moneycontrol.service.ItemServiceImpl;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MoneycontrolApplication.class)
 @SpringBootTest
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ItemControllerTest {
 	
 	private MockMvc mockMvc;
@@ -175,8 +174,41 @@ public class ItemControllerTest {
 		
 		verify(itemServiceMock, times(1)).delete(1L);
 		verifyNoMoreInteractions(itemServiceMock);
-//		
+
 		boolean retorno = true;
 		assertEquals(retorno, true);
+	}
+	
+	@Test
+	public void naoDeveriaSalvarItem() throws Exception {
+		Item item = new Item();
+		item.setNome("");
+		
+		mockMvc.perform(post("/itens")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{ \"codigo\" : null, \"nome\" : \"\" }"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$.codigo", is(402)))
+        .andExpect(jsonPath("$.mensagem", is("Informe o nome do item.")));
+
+		ResponseBean responseBean = new ResponseBean(402, "Informe o nome do item.");
+		assertEquals(responseBean.getCodigo(), 402);
+		assertEquals(responseBean.getMensagem(), "Informe o nome do item.");
+	}
+	
+	//@Test
+	public void naoDeveriaAtualizarItem() throws Exception {
+		mockMvc.perform(put("/itens/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{ \"codigo\" : 1, \"nome\" : \"\" }"))
+        .andExpect(status().isOk())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$.codigo", is(402)))
+        .andExpect(jsonPath("$.mensagem", is("Informe o nome do item.")));
+
+		ResponseBean responseBean = new ResponseBean("Informe o nome do item.");
+		assertEquals(responseBean.getCodigo(), 402);
+		assertEquals(responseBean.getMensagem(), "Informe o nome do item.");
 	}
 }

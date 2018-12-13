@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import br.com.asas.moneycontrol.exception.ErrorResponse;
 import br.com.asas.moneycontrol.exception.ItemException;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class RestExceptionHandler {
 
-	@ExceptionHandler(ItemException.class)
+//	@ExceptionHandler(ItemException.class)
 	public ResponseEntity<ErrorResponse> exceptionItemHandler(Exception ex) {
 		ErrorResponse error = new ErrorResponse();
 		error.setErrorCode(HttpStatus.NOT_FOUND.value());

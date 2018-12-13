@@ -54,19 +54,22 @@ public class ItemController {
 	public ResponseEntity<?> save(@Valid @RequestBody Item item, Errors errors) {
 		try {
 			if(errors.hasErrors()) {
-				return ResponseEntity.ok(errors.getFieldError().getDefaultMessage());
+				return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
 			}
 			ResponseBean response = itemService.save(item);
 			return ResponseEntity.ok(response);
 		} catch (ItemException e) {
 			e.getMessage();
-			return (ResponseEntity<?>) ResponseEntity.ok();
+			return ResponseEntity.ok(new ResponseBean(502, e.getMessage()));
 		}
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody Item item) {
+	public ResponseEntity<?> update(@Valid @PathVariable("id") Long id, @RequestBody Item item, Errors errors) {
 		try {
+			if(errors.hasErrors()) {
+				return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
+			}
 			ResponseBean response = itemService.update(item);
 			return ResponseEntity.ok(response);
 		} catch (ItemException e) {

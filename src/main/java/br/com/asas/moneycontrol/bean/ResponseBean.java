@@ -7,6 +7,12 @@ public class ResponseBean {
 		this.mensagem = mensagem;
 	}
 	
+	public ResponseBean(int codigo, String mensagem) {
+		super();
+		this.codigo = codigo;
+		this.mensagem = mensagem;
+	}
+	
 	private int codigo;
 	private String mensagem;
 	
