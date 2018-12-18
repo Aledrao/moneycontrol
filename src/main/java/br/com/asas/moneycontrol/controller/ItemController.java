@@ -65,7 +65,7 @@ public class ItemController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> update(@Valid @PathVariable("id") Long id, @RequestBody Item item, Errors errors) {
+	public ResponseEntity<?> update(@PathVariable("id") Long id, @Valid @RequestBody Item item, Errors errors) {
 		try {
 			if(errors.hasErrors()) {
 				return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));

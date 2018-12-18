@@ -3,6 +3,7 @@ package br.com.asas.moneycontrol.controller;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,10 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,11 +35,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.asas.moneycontrol.MoneycontrolApplication;
 import br.com.asas.moneycontrol.bean.ResponseBean;
 import br.com.asas.moneycontrol.entity.Item;
+import br.com.asas.moneycontrol.exception.ItemException;
 import br.com.asas.moneycontrol.service.ItemServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,11 +55,8 @@ public class ItemControllerTest {
 	@MockBean
 	private ItemServiceImpl itemServiceMock;
 	
-	private ObjectMapper jsonMapper;
-	
 	@Before
 	public void setup() {
-		jsonMapper = new ObjectMapper();
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
 	
@@ -197,18 +192,29 @@ public class ItemControllerTest {
 		assertEquals(responseBean.getMensagem(), "Informe o nome do item.");
 	}
 	
-	//@Test
+	@Test
 	public void naoDeveriaAtualizarItem() throws Exception {
 		mockMvc.perform(put("/itens/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{ \"codigo\" : 1, \"nome\" : \"\" }"))
         .andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(jsonPath("$.codigo", is(402)))
         .andExpect(jsonPath("$.mensagem", is("Informe o nome do item.")));
 
-		ResponseBean responseBean = new ResponseBean("Informe o nome do item.");
+		ResponseBean responseBean = new ResponseBean(402, "Informe o nome do item.");
 		assertEquals(responseBean.getCodigo(), 402);
 		assertEquals(responseBean.getMensagem(), "Informe o nome do item.");
+	}
+	
+	@Test
+	public void deveriaTestarItemException() throws Exception {
+		Item item = new Item();
+		when(itemServiceMock.save(item)).thenThrow(new ItemException());
+
+		itemServiceMock.save(new Item());
+	}
+	
+	private boolean throwException() throws ItemException {
+		throw new ItemException();
 	}
 }
