@@ -23,68 +23,47 @@ import br.com.asas.moneycontrol.service.ItemService;
 @RestController
 @RequestMapping(value = "/itens")
 public class ItemController {
-	
+
 	@Autowired
 	private ItemService itemService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> all() {
-		try {
-			List<Item> itens = itemService.findAll();
-			return ResponseEntity.ok().body(itens);
-		} catch (ItemException e) {
-			e.getMessage();
-			return (ResponseEntity<?>) ResponseEntity.noContent();
-		}
+		List<Item> itens = itemService.findAll();
+		return ResponseEntity.ok().body(itens);
 	}
-	
+
 	@ResponseBody
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<?> findOne(@PathVariable("id") Long id) {
-		try {
+		if (itemService.findItem(id)) {
 			Item item = itemService.findById(id);
-			return ResponseEntity.ok().body(item);
-		} catch (ItemException e) {
-			e.getMessage();
-			return (ResponseEntity<?>) ResponseEntity.noContent();
+			return ResponseEntity.ok(item);
 		}
+		return ResponseEntity.ok().body(new ResponseBean(402, "Não foi possivel localizar o item, com o código: " +id));
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> save(@Valid @RequestBody Item item, Errors errors) {
-		try {
-			if(errors.hasErrors()) {
-				return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
-			}
-			ResponseBean response = itemService.save(item);
-			return ResponseEntity.ok(response);
-		} catch (ItemException e) {
-			e.getMessage();
-			return ResponseEntity.ok(new ResponseBean(502, e.getMessage()));
+		if (errors.hasErrors()) {
+			return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
 		}
+		ResponseBean response = itemService.save(item);
+		return ResponseEntity.ok(response);
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> update(@PathVariable("id") Long id, @Valid @RequestBody Item item, Errors errors) {
-		try {
-			if(errors.hasErrors()) {
-				return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
-			}
-			ResponseBean response = itemService.update(item);
-			return ResponseEntity.ok(response);
-		} catch (ItemException e) {
-			e.getMessage();
-			return (ResponseEntity<?>) ResponseEntity.badRequest();
+		if (errors.hasErrors()) {
+			return ResponseEntity.ok(new ResponseBean(402, errors.getFieldError().getDefaultMessage()));
 		}
+		ResponseBean response = itemService.update(item);
+		return ResponseEntity.ok(response);
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> delete(@PathVariable("id") Long id) throws ItemException {
-		try {
-			boolean response = itemService.delete(id);
-			return ResponseEntity.ok(response);			
-		} catch (Exception e) {
-			return (ResponseEntity<?>) ResponseEntity.badRequest();
-		}
+		boolean response = itemService.delete(id);
+		return ResponseEntity.ok(response);
 	}
 }
