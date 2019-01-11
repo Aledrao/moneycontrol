@@ -1,6 +1,5 @@
 package br.com.asas.moneycontrol.controller;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
@@ -38,9 +37,7 @@ import org.springframework.web.context.WebApplicationContext;
 import br.com.asas.moneycontrol.MoneycontrolApplication;
 import br.com.asas.moneycontrol.bean.ResponseBean;
 import br.com.asas.moneycontrol.entity.Item;
-import br.com.asas.moneycontrol.exception.ItemException;
 import br.com.asas.moneycontrol.service.ItemServiceImpl;
-import junit.framework.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MoneycontrolApplication.class)
@@ -98,6 +95,23 @@ public class ItemControllerTest {
 				.isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andExpect(jsonPath("$.codigo").value(1L)).andExpect(jsonPath("$.nome").value("Transporte"))
+				.andDo(print());
+	}
+	
+	@Test
+	public void naoDeveriaEncontrarItemAtravesId() throws Exception {
+		Item item = new Item();
+		item.setCodigo(1L);
+		item.setNome("Transporte");
+
+		when(itemServiceMock.findItem(8L)).thenReturn(false);
+		when(itemServiceMock.findById(8L)).thenReturn(new Item());		
+
+		mockMvc.perform(get("/itens/8")).andExpect(
+				status()
+				.isOk())
+				.andExpect(content().contentType("application/json;charset=UTF-8"))
+				.andExpect(jsonPath("$.codigo").value(402L)).andExpect(jsonPath("$.mensagem").value("Não foi possivel localizar o item, com o código: 8"))
 				.andDo(print());
 	}
 
